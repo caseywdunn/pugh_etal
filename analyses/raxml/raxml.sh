@@ -15,7 +15,7 @@
 
 # Run a command
 
-module load raxml
+module load raxml/8.2.0
 
 mpirun -n 32 raxmlHPC-MPI  -f a -x 12345 -p 12345 -N 500 -m GTRGAMMA -s ../../data/combined.phy -q ../../data/partitions.txt -n combined
 mpirun -n 32 raxmlHPC-MPI  -f a -x 12345 -p 12345 -N 500 -m GTRGAMMA -s ../../data/16s.phy -n 16s

@@ -38,3 +38,4 @@ Created combined alignment with phyutility v.2.2.6:
     java -jar phyutility.jar -concat -in 16s.aligned.fasta 18s.aligned.fasta -out combined.nex
 
 Used mesquite to generate phylip files.
+
