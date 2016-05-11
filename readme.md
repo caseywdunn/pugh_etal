@@ -112,5 +112,10 @@ The stability, in increasing order, is:
 
 Created `data/combined_stab82.phy` by removing the least stable 8 taxa in `data/combined.phy`, which was a stability cutoff of 82%. This threshold was chosen in part because it got rid of the very long branch `Clausophyes_moserae_T749SS1`, which Lynne was concerned about, and everything less stable. Re-analyzed with `analyses/raxml/raxml_stab82.sh`. Then increased the threshold to 85%, which excludes `Rosacea_flaccida` and `Craseoa_lathetica`, to see if they are obscuring support for placement of Tottonophyes. They had very little impact, so best to proceed with 82% and include them.
 
+![Combined - All taxa](https://rawgit.com/master/analyses/raxml/combined.svg)
 
 
+![Combined - 82% leaf stability](https://rawgit.com/master/analyses/raxml/combined_82.svg)
+
+
+![Combined - 85% leaf stability](https://rawgit.com/master/analyses/raxml/combined_85.svg)
