@@ -1,0 +1,10 @@
+18s	16s	name	date	depth	loc	lat	lon	comment				
+1	1	Sphaeronectes_haddocki|D31-D8	30-May-09	330	Doc3a	35 56.8	123 57.4	corrected sampler #
+1	1	Sphaeronectes_christiansonae|T987-D3	16-May-06	840	Dav1	35 30.8595	123 39.7336						
+1	1	Crystallophyes_amygdalina|T986-D6	15-May-06	2632	Tib3b	35 38.0078	122 44.4581					
+1	1	Clausophyid_missinglink|T897-D4	23-Sep-05	1343	unk	36.655	-122.1585	"collected on Robison dive, now Tottonphyes"
+1	1	Clausophyes_moserae |T749-ss1	8-Oct-04	595	Tib6	35046.3816	122 50.2442	16s may not be correct based on preliminary tree?
+1	1	Chuniphyes_moserae |T408-ss11	19-Mar-02	2238	Offshore 3k	36 30.0	122 50.0					
+1	1	Desmophyes_haemaogaster|T854-D5	8-Jun-05	406	Robi3500m	36 19.7947	122 53.9545	previously called "Prayid"
+1	0	Sphaeronectes_christiansonae|D557-D7	23-Nov-13	1202	Doc	36 4.05	122 17.7916	no 16s sequence
+								
