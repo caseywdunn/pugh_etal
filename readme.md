@@ -39,3 +39,9 @@ Created combined alignment with phyutility v.2.2.6:
 
 Used mesquite to generate phylip files.
 
+Ran `analyses/raxml/raxml.sh`. Then:
+
+    java -jar phyutility.jar -ls -in RAxML_bootstrap.combined > leafstability.txt
+
+Created `data/combined_stab82.phy` by removing the least stable 8 taxa in `data/combined.phy`. Re-analyzed with `analyses/raxml/raxml_stab82.sh`
+
