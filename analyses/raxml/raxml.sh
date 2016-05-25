@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Request an hour of runtime:
-#SBATCH --time=48:00:00
+#SBATCH --time=12:00:00
 
 #SBATCH --nodes=4
 #SBATCH --tasks-per-node=8
