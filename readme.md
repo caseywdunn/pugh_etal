@@ -113,3 +113,6 @@ Sorted stability values:
 Created a new matrix `combined_80.phy` from which all taxa with stability lower than 80 were removed.
 
 Ran `analyses/raxml/raxml80.sh`.  
+
+![Combined - Stable taxa](./analyses/raxml/combined_80.png?raw=true)
+Stable taxa, raxml ml analysis with bootstraps for 16s and 18s combined matrix.
