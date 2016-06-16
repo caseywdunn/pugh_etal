@@ -15,7 +15,7 @@
 #######################
 
 # read in the character data
-filenames <- v("data/primates_cox2.nex", "data/primates_cytb.nex")
+filenames <- v("../../data/16s_80s.nex", "../../data/18s_80s.nex")
 
 n_data_subsets <- filenames.size()
 for (i in 1:n_data_subsets) {
@@ -24,6 +24,8 @@ for (i in 1:n_data_subsets) {
 
 # Get some useful variables from the data. We need these later on.
 taxa <- data[1].taxa()
+n_species <- data[1].ntaxa()
+n_branches <- 2 * n_species - 3
 
 mvi = 0
 mni = 0
@@ -68,67 +70,39 @@ for (i in 1:n_data_subsets) {
 # Tree model #
 ##############
 
-### the BDP is conditioned on the root time
-### here we fix it to 90 million year ago
-root_time <- 90
+# construct a variable for the tree drawn from a birth death process
+topology ~ dnUniformTopology(taxa=taxa)
 
-### the birth rate is a stochastic random variable drawn from a lognormal prior
-### MCMC samples this variable using a scale proposal
-diversification_mean <- ln( ln(450.0/2.0) / root_time )
-diversification_sd <- 0.587405
-diversification ~ dnLognormal(mean=diversification_mean,sd=diversification_sd) 
-moves[++mvi] = mvScale(diversification,lambda=1.0,tune=true,weight=3.0)
+# add topology Metropolis-Hastings moves
+moves[++mvi] = mvNNI(topology, weight=1.0)
+moves[++mvi] = mvSPR(topology, weight=1.0)
 
-turnover_mean <- ln( ln(450.0/2.0) / root_time )
-turnover_sd <- 0.587405*2
-turnover ~ dnLognormal(mean=turnover_mean,sd=turnover_sd) 
-moves[++mvi] = mvScale(turnover,lambda=1.0,tune=true,weight=3.0)
-
-### Transform the parameters
-birth_rate := diversification + turnover
-death_rate := turnover
-
-### rho is the probability of sampling species at the present
-### fix this to 23/450, since there are ~450 described species of primates
-### and we have sampled 23
-rho <- taxa.size()/450
-
-### the time tree is a stochastic node modeled by the constant rate birth-death process (dnBDP)
-psi ~ dnBDP(lambda=birth_rate, mu=death_rate, rho=rho, rootAge=root_time, samplingStrategy="uniform", condition="survival", taxa=taxa)
-
-moves[++mvi] = mvNarrow(psi, weight=5.0)
-moves[++mvi] = mvNNI(psi, weight=1.0)
-moves[++mvi] = mvFNPR(psi, weight=3.0)
-#moves[++mvi] = mvGPR(psi, weight=3.0)
-moves[++mvi] = mvSubtreeScale(psi, weight=3.0)
-moves[++mvi] = mvNodeTimeSlideUniform(psi, weight=15.0)
-
-
-###################
-# Molecular clock #
-###################
-
-### Here, we will estimate the clock rate here because we fixed the root age
-### we use a uniform prior on the log-transform clock rate
-log_global_clock_rate ~ dnUniform(-6,1)
-moves[++mvi] = mvSlide(log_global_clock_rate, weight=2.0)
-global_clock_rate := 10^log_global_clock_rate
-
-# specify a rate multiplier for each partition
-part_rate_mult ~ dnDirichlet( rep(1.0, n_data_subsets) )
-moves[++mvi] = mvBetaSimplex(part_rate_mult, alpha=1.0, tune=true, weight=n_data_subsets)
-moves[++mvi] = mvDirichletSimplex(part_rate_mult, alpha=1.0, tune=true, weight=2.0)
-
-for (i in 1:n_data_subsets) {
-    part_rate[i] := part_rate_mult[i] * n_data_subsets * global_clock_rate
+# create branch length vector and add moves
+for (i in 1:n_branches) {
+   br_lens[i] ~ dnExponential(10.0)
+   moves[++mvi] = mvScale(br_lens[i])
 }
+
+# add deterministic node to monitor tree length
+TL := sum(br_lens)
+
+# unite topology and branch length vector into phylogeny object
+phylogeny := treeAssembly(topology, br_lens)
 
 ###################
 # PhyloCTMC Model #
 ###################
 
+
+part_rate_mult ~ dnDirichlet( rep(1.0, n_data_subsets) )
+
 for (i in 1:n_data_subsets) {
-    phyloSeq[i] ~ dnPhyloCTMC(tree=psi, Q=Q[i], branchRates=part_rate[i], siteRates=gamma_rates[i], pInv=pinvar[i], type="DNA")
+    part_rate[i] := part_rate_mult[i] * n_data_subsets
+}
+
+
+for (i in 1:n_data_subsets) {
+    phyloSeq[i] ~ dnPhyloCTMC(tree=phylogeny, Q=Q[i], branchRates=part_rate[i], siteRates=gamma_rates[i], pInv=pinvar[i], type="DNA")
     phyloSeq[i].clamp(data[i])
 }
 
@@ -137,23 +111,23 @@ for (i in 1:n_data_subsets) {
 # Analysis #
 ############
 
-mymodel = model(psi)
+mymodel = model(phylogeny)
 
 # add monitors
-monitors[++mni] = mnModel(filename="output/PS_gene.log",printgen=10)
-monitors[++mni] = mnFile(psi, filename="output/PS_gene.trees", printgen=100)
-monitors[++mni] = mnScreen(global_clock_rate, printgen=1000)
+monitors[++mni] = mnModel(filename="output/gene.log",printgen=10)
+monitors[++mni] = mnFile(phylogeny, filename="output/gene.trees", printgen=100)
+
 
 # run the analysis
 mymcmc = mcmc(mymodel, moves, monitors)
-mymcmc.burnin(10000,200)
-mymcmc.run(30000)
+mymcmc.burnin(100000,1000)
+mymcmc.run(300000)
 
 # summarize output
-treetrace = readTreeTrace("output/PS_gene.trees")
+treetrace = readTreeTrace("output/gene.trees")
 #treetrace.summarize()
 
-map_tree = mapTree(treetrace,"output/PS_gene_map.tre")
+map_tree = mapTree(treetrace,"output/gene_map.tre")
 
 
 # you may want to quit RevBayes now
