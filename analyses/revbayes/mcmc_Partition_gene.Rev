@@ -15,7 +15,7 @@
 #######################
 
 # read in the character data
-filenames <- v("16s_80s.nex", "18s_80s.nex")
+filenames <- v("../../data/16s_80s.nex", "../../data/18s_80s.nex")
 
 n_data_subsets <- filenames.size()
 for (i in 1:n_data_subsets) {
@@ -122,12 +122,12 @@ monitors[++mni] = mnScreen(alpha,printgen=100)
 
 # run the analysis
 mymcmc = mcmc(mymodel, moves, monitors)
-#mymcmc.burnin(100000,1000)
+mymcmc.burnin(10000,1000)
 mymcmc.run(300000)
 
 # summarize output
 treetrace = readTreeTrace("output/gene.trees")
-#treetrace.summarize()
+treetrace.summarize()
 
 map_tree = mapTree(treetrace,"output/gene_map.tre")
 
