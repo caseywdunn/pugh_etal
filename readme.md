@@ -115,4 +115,17 @@ Created a new matrix `combined_80.phy` from which all taxa with stability lower 
 Ran `analyses/raxml/raxml80.sh`.  
 
 ![Combined - Stable taxa](./analyses/raxml/combined_80.png?raw=true)
+
 Stable taxa, raxml ml analysis with bootstraps for 16s and 18s combined matrix.
+
+Ran revbayes analyses in `analyses/revbayes`.
+
+Combined results with:
+
+    java -jar /Users/cdunn/Dropbox/repo/neptune2016/hydroidolina/phyutility.jar -ts -tree raxml/RAxML_bipartitions.combined_80 -in revbayes/output/gene_simple.trees -out integrated_rax_rev.tre
+
+## Species names
+
+Below is additional information on species names that have come to light since conducting these analyses:
+
+- `Kephyes_sp_nov_1` is in fact `Kephyes_ovata`, based on investigation by Phil Pugh of specimen T595-D5
